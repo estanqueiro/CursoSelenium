@@ -1,5 +1,4 @@
 import java.util.List;
-
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -11,50 +10,45 @@ import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.support.ui.Select;
 
 public class TesteElementosBasicos {
-
-	private WebDriver driver = new FirefoxDriver();
+	
+	private WebDriver driver;
+	private DSL dsl;
 	
 	@Before
 	public void inicializa() {
+		driver = new FirefoxDriver();
 		driver.get("file:///" + System.getProperty("user.dir") + "/src/main/resources/componentes.html");
+		dsl = new DSL(driver);
 	}
 	
 	@Test
 	public void testeTextField() {
-		driver.findElement(By.id("elementosForm:nome")).sendKeys("Teste de escrita");
-		String textField = driver.findElement(By.id("elementosForm:nome")).getAttribute("value");
-		Assert.assertEquals("Teste de escrita", textField);
+		dsl.escrever("elementosForm:nome", "Teste de escrita");
+		Assert.assertEquals("Teste de escrita", dsl.obterValorCampo("elementosForm:nome"));
 	}
 	
 	@Test
 	public void deveInteragirComTextArea() throws InterruptedException {
-		driver.findElement(By.id("elementosForm:sugestoes")).sendKeys("Teste");
-		String textArea = driver.findElement(By.id("elementosForm:sugestoes")).getAttribute("value");
-		Assert.assertEquals("Teste",textArea);
+		dsl.escrever("elementosForm:sugestoes", "Teste");
+		Assert.assertEquals("Teste de escrita", dsl.obterValorCampo("elementosForm:sugestoes"));
 	}
 	
 	@Test
 	public void deveInteragirComRadioButton() throws InterruptedException {
-		driver.findElement(By.id("elementosForm:sexo:0")).click();
-		boolean masculino = driver.findElement(By.id("elementosForm:sexo:0")).isSelected();
-		Assert.assertTrue(masculino);
+		dsl.clicarRadioOuCheck("elementosForm:sexo:0");
+		Assert.assertTrue(dsl.isRadioOuCheckMarcado("elementosForm:sexo:0"));
 	}
 	
 	@Test
 	public void deveInteragirComCheckBox() throws InterruptedException {
-		driver.findElement(By.id("elementosForm:comidaFavorita:2")).click();
-		boolean comidaFavorita = driver.findElement(By.id("elementosForm:comidaFavorita:2")).isSelected();
-		Assert.assertTrue(comidaFavorita);
+		dsl.clicarRadioOuCheck("elementosForm:comidaFavorita:2");
+		Assert.assertTrue(dsl.isRadioOuCheckMarcado("elementosForm:comidaFavorita:2"));
 	}
 	
 	@Test
 	public void deveInteragirComComboBox() throws InterruptedException {
-		WebElement element = driver.findElement(By.id("elementosForm:escolaridade"));
-		Select combo = new Select(element);
-		//combo.selectByIndex(2);
-		//combo.selectByValue("superior");
-		combo.selectByVisibleText("2o grau completo");
-		Assert.assertEquals("2o grau completo",combo.getFirstSelectedOption().getText());
+		dsl.selecionarCombo("elementosForm:escolaridade", "2o grau completo");
+		Assert.assertEquals("2o grau completo", dsl.obterValorCombo("elementosForm:escolaridade"));
 	}
 	
 	@Test
