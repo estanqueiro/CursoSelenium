@@ -18,8 +18,8 @@ public class TesteCadastro {
 		driver.findElement(By.id("elementosForm:sexo:0")).click();
 		driver.findElement(By.id("elementosForm:comidaFavorita:2")).click();
 		
-		WebElement escolaridade = driver.findElement(By.id("elementosForm:escolaridade"));
-		Select comboEscolaridade = new Select(escolaridade);
+		WebElement escola = driver.findElement(By.id("elementosForm:escolaridade"));
+		Select comboEscolaridade = new Select(escola);
 		comboEscolaridade.selectByVisibleText("Especializacao");
 		
 		WebElement esportes = driver.findElement(By.id("elementosForm:esportes"));
@@ -28,14 +28,24 @@ public class TesteCadastro {
 		
 		driver.findElement(By.id("elementosForm:cadastrar")).click();
 		
-		WebElement cadastro = driver.findElement(By.id("resultado"));
-		Assert.assertEquals("Cadastrado!", actual);
-		Assert.assertEquals("Nome: Paulo", actual);
-		Assert.assertEquals("Sobrenome: Estanqueiro", actual);
-		Assert.assertEquals("Sexo: Masculino", actual);
-		Assert.assertEquals("Comida: Pizza", actual);
-		Assert.assertEquals("Escolaridade: Especializacao", actual);
-		Assert.assertEquals("Esportes: Futebol", actual);
-		Assert.assertEquals("Sugestoes:", actual);
+		String cadastro = driver.findElement(By.xpath("//div[@id='resultado']/span")).getText();
+		String nome = driver.findElement(By.xpath("//div[@id='descNome']")).getText();
+		String sobrenome = driver.findElement(By.xpath("//div[@id='descSobrenome']")).getText();
+		String sexo = driver.findElement(By.id("descSexo")).getText();
+		String comida = driver.findElement(By.id("descComida")).getText();
+		String escolaridade = driver.findElement(By.id("descEscolaridade")).getText();
+		String esporte = driver.findElement(By.id("descEsportes")).getText();
+		String sugestoes = driver.findElement(By.id("descSugestoes")).getText();
+		
+		Assert.assertEquals("Cadastrado!", cadastro);
+		Assert.assertEquals("Nome: Paulo", nome);
+		Assert.assertEquals("Sobrenome: Estanqueiro", sobrenome);
+		Assert.assertEquals("Sexo: Masculino", sexo);
+		Assert.assertEquals("Comida: Pizza", comida);
+		Assert.assertEquals("Escolaridade: especializacao", escolaridade);
+		Assert.assertEquals("Esportes: Futebol", esporte);
+		Assert.assertEquals("Sugestoes:", sugestoes);
+		
+		driver.quit();
 	}
 }
