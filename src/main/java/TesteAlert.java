@@ -1,17 +1,22 @@
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.Alert;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.chrome.ChromeDriver;
-
-import org.junit.Assert;
+import org.openqa.selenium.firefox.FirefoxDriver;
 
 public class TesteAlert {
-
+	private WebDriver driver = new FirefoxDriver();
+	
+	@Before
+	public void inicializa() {
+		driver.get("file:///" + System.getProperty("user.dir") + "/src/main/resources/componentes.html");
+	}
+	
 	@Test
 	public void deveInteragirComAlertSimples() throws InterruptedException {
-		WebDriver driver = new ChromeDriver();
-		driver.get("file:///" + System.getProperty("user.dir") + "/src/main/resources/componentes.html");
 		driver.findElement(By.id("alert")).click();
 		Alert alert = driver.switchTo().alert();
 		String texto = alert.getText();
@@ -22,9 +27,6 @@ public class TesteAlert {
 	
 	@Test
 	public void deveInteragirComAlertConfirmacao() throws InterruptedException {
-		WebDriver driver = new ChromeDriver();
-		driver.get("file:///" + System.getProperty("user.dir") + "/src/main/resources/componentes.html");
-		
 		driver.findElement(By.id("confirm")).click();
 		Alert alerta = driver.switchTo().alert();
 		Assert.assertEquals("Confirm Simples", alerta.getText());
@@ -37,15 +39,10 @@ public class TesteAlert {
 		alerta.dismiss();
 		Assert.assertEquals("Negado", alerta.getText());
 		alerta.dismiss();
-		
-		driver.quit();
 	}
 	
 	@Test
 	public void deveInteragirComAlertPrompt() throws InterruptedException {
-		WebDriver driver = new ChromeDriver();
-		driver.get("file:///" + System.getProperty("user.dir") + "/src/main/resources/componentes.html");
-		
 		driver.findElement(By.id("prompt")).click();
 		Alert alerta = driver.switchTo().alert();
 		Assert.assertEquals("Digite um numero", alerta.getText());
@@ -55,7 +52,10 @@ public class TesteAlert {
 		alerta.accept();
 		Assert.assertEquals(":D", alerta.getText());
 		alerta.accept();
-		
+	}
+	
+	@After
+	public void finaliza() {
 		driver.quit();
 	}
 }
