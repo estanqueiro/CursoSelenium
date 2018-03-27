@@ -1,13 +1,13 @@
+import java.util.Arrays;
 import java.util.List;
+
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
 import org.openqa.selenium.firefox.FirefoxDriver;
-import org.openqa.selenium.support.ui.Select;
 
 public class TesteElementosBasicos {
 	
@@ -29,20 +29,20 @@ public class TesteElementosBasicos {
 	
 	@Test
 	public void deveInteragirComTextArea() throws InterruptedException {
-		dsl.escrever("elementosForm:sugestoes", "Teste");
-		Assert.assertEquals("Teste de escrita", dsl.obterValorCampo("elementosForm:sugestoes"));
+		dsl.escrever("elementosForm:sugestoes", "teste\n\naasldjdlks\nUltima linha");
+		Assert.assertEquals("teste\n\naasldjdlks\nUltima linha", dsl.obterValorCampo("elementosForm:sugestoes"));
 	}
 	
 	@Test
 	public void deveInteragirComRadioButton() throws InterruptedException {
-		dsl.clicarRadioOuCheck("elementosForm:sexo:0");
-		Assert.assertTrue(dsl.isRadioOuCheckMarcado("elementosForm:sexo:0"));
+		dsl.clicarRadio("elementosForm:sexo:0");
+		Assert.assertTrue(dsl.isRadioMarcado("elementosForm:sexo:0"));
 	}
 	
 	@Test
 	public void deveInteragirComCheckBox() throws InterruptedException {
-		dsl.clicarRadioOuCheck("elementosForm:comidaFavorita:2");
-		Assert.assertTrue(dsl.isRadioOuCheckMarcado("elementosForm:comidaFavorita:2"));
+		dsl.clicarCheck("elementosForm:comidaFavorita:2");
+		Assert.assertTrue(dsl.isCheckMarcado("elementosForm:comidaFavorita:2"));
 	}
 	
 	@Test
@@ -53,67 +53,42 @@ public class TesteElementosBasicos {
 	
 	@Test
 	public void deveVerificarValoresCombo() throws InterruptedException {
-		WebElement element = driver.findElement(By.id("elementosForm:escolaridade"));
-		Select combo = new Select(element);
-		List<WebElement> options = combo.getOptions();
-		Assert.assertEquals(8,options.size());
-		
-		boolean encontrou = false;
-		for(WebElement option: options) {
-			if(option.getText().equals("Mestrado")) {
-				encontrou = true;
-				break;
-			}
-		}
-		Assert.assertTrue(encontrou);
+		Assert.assertEquals(8,dsl.obterQuantidadeOpcoesCombo("elementosForm:escolaridade"));
+		Assert.assertTrue(dsl.verificarOpcaoCombo("elementosForm:escolaridade", "Mestrado"));
 	}
 	
 	@Test
 	public void deveVerificarValoresComboMultiplo() throws InterruptedException {
-		WebElement element = driver.findElement(By.id("elementosForm:esportes"));
-		Select combo = new Select(element);
-		List<WebElement> options = combo.getOptions();
-		Assert.assertEquals(5,options.size());
+		dsl.selecionarCombo("elementosForm:esportes", "Natacao");
+		dsl.selecionarCombo("elementosForm:esportes", "Corrida");
+		dsl.selecionarCombo("elementosForm:esportes", "O que eh esporte?");
 		
-		combo.selectByVisibleText("Natacao");
-		combo.selectByVisibleText("Corrida");
-		combo.selectByVisibleText("O que eh esporte?");
+		List<String> opcoesMarcadas = dsl.obterValoresCombo("elementosForm:esportes");
+		Assert.assertEquals(3, opcoesMarcadas.size());
 		
-		List<WebElement> allSelectedOptions = combo.getAllSelectedOptions();
-		Assert.assertEquals(3, allSelectedOptions.size());
-		
-		combo.deselectByVisibleText("O que eh esporte?");
-		allSelectedOptions = combo.getAllSelectedOptions();
-		Assert.assertEquals(2, allSelectedOptions.size());
+		dsl.deselecionarCombo("elementosForm:esportes", "Corrida");
+		opcoesMarcadas = dsl.obterValoresCombo("elementosForm:esportes");
+		Assert.assertEquals(2, opcoesMarcadas.size());
+		Assert.assertTrue(opcoesMarcadas.containsAll(Arrays.asList("Natacao", "O que eh esporte?")));	
+
 	}
 	
 	@Test
 	public void deveInteragirComBotoes() throws InterruptedException {
-		WebElement botao = driver.findElement(By.id("buttonSimple"));
-		botao.click();
-		
-		Assert.assertEquals("Obrigado!",botao.getAttribute("value"));
+		dsl.clicarBotao("buttonSimple");
+		Assert.assertEquals("Obrigado!", dsl.obterValoresElemento("buttonSimple"));
 	}	
 
 	@Test
 	public void deveInteragirComLinks() throws InterruptedException {
-		WebElement link = driver.findElement(By.linkText("Voltar"));
-		Assert.assertEquals("Voltar",link.getText());
-		link.click();
-
-		WebElement resultado = driver.findElement(By.id("resultado"));	
-		Assert.assertEquals("Voltou!", resultado.getText());
+		dsl.clicarLink("Voltar");
+		Assert.assertEquals("Voltou!", dsl.obterTexto("resultado"));
 	}
 	
 	@Test
-	public void deveBuscarTextoNaPagina() throws InterruptedException {
-		//Assert.assertTrue(driver.findElement(By.tagName("body")).getText().contains("Campo de Treinamento"));
-				
-		WebElement titulo = driver.findElement(By.tagName("h3"));
-		Assert.assertEquals("Campo de Treinamento", titulo.getText());
-		
-		WebElement cuidado = driver.findElement(By.className("facilAchar"));
-		Assert.assertEquals("Cuidado onde clica, muitas armadilhas...", cuidado.getText());
+	public void deveBuscarTextoNaPagina() throws InterruptedException {		
+		Assert.assertEquals("Campo de Treinamento", dsl.obterTexto(By.tagName("h3")));
+		Assert.assertEquals("Cuidado onde clica, muitas armadilhas...", dsl.obterTexto(By.className("facilAchar")));		
 	}	
 	
 	@After
