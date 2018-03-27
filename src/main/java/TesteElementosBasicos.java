@@ -28,6 +28,14 @@ public class TesteElementosBasicos {
 	}
 	
 	@Test
+	public void testTextFieldDuplo() {
+		dsl.escrever("elementosForm:nome", "Paulo");
+		Assert.assertEquals("Paulo", dsl.obterValorCampo("elementosForm:nome"));
+		dsl.escrever("elementosForm:nome", "Estanqueiro");
+		Assert.assertEquals("Estanqueiro", dsl.obterValorCampo("elementosForm:nome"));
+	}
+	
+	@Test
 	public void deveInteragirComTextArea() throws InterruptedException {
 		dsl.escrever("elementosForm:sugestoes", "teste\n\naasldjdlks\nUltima linha");
 		Assert.assertEquals("teste\n\naasldjdlks\nUltima linha", dsl.obterValorCampo("elementosForm:sugestoes"));
